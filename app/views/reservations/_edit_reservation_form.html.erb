@@ -3,7 +3,7 @@
   <header class="cart-header">
      <h2>Reservation Details</h2>
   </header>
-  <%= form_tag url_for(controller: 'catalog', action: 'submit_form'), class: 'form-vertical', method: :post do %>
+  <%= form_tag url_for(controller: 'catalog', action: 'submit_cart_updates_form'), class: 'form-vertical', method: :post do %>
     <div class="cart_reserver">
       <%= hidden_field_tag 'reserver_id', cart.reserver.id  %>
     </div>

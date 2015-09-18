@@ -42,45 +42,28 @@ class CatalogController < ApplicationController
     end
   end
 
-  def submit_form # rubocop:disable MethodLength, AbcSize
+  def submit_cart_updates_form # rubocop:disable MethodLength, AbcSize
     flash.clear
     begin
       # set the start and end date to updated values
-      # expects date in format MM/DD/YYYY or MM/DD/YY
+      # converts the dates into the expected format
       start_date = Date.strptime(params[:form][:start_date], '%m/%d/%Y')
       due_date = Date.strptime(params[:form][:due_date], '%m/%d/%Y')
-      # Wcan't change the past
-      unless start_date >= Date.today && due_date >= Date.today
-        fail ArgumentError
-      end
-      cart.start_date = start_date
-      cart.due_date = due_date
-      cart.fix_due_date
-      flash[:notice] = 'Reservation updated.'
-    rescue ArgumentError
-      flash[:alert] = 'Please enter a valid start or due date.'
+      params[:cart] = params[:form]
+      params[:cart][:start_date_cart] = start_date.strftime("%Y-%m-%d")
+      params[:cart][:due_date_cart] = due_date.strftime("%Y-%m-%d")
+      update_cart
     end
 
-    # get soft blackout notices
-    notices = []
-    notices << Blackout.get_notices_for_date(cart.start_date, :soft)
-    notices << Blackout.get_notices_for_date(cart.due_date, :soft)
-    notices = notices.reject(&:blank?).to_sentence
-    notices += "\n" unless notices.blank?
     # update all the items in the cart
-    (0..(params[:quantity].count - 1)).each do |i|
-      @quantity = params[:quantity].values[i].to_i
-      @model_id = params[:quantity].keys[i].to_i
+    params[:quantity].each do |model_id, quantity|
+      quantity = quantity.to_i
       # make sure the quantity changed before looking for Models
-      if cart.items[@model_id] != @quantity
-        @equipment_model = EquipmentModel.find(@model_id)
-        cart.send(:edit_cart_item, @equipment_model, @quantity)
+      if cart.items[model_id] != quantity
+        equipment_model = EquipmentModel.find(model_id)
+        cart.send(:edit_cart_item, equipment_model, quantity)
       end
     end
-
-    # don't over-write flash if invalid date was set above
-    flash[:alert] ||= notices + "\n"
-
     redirect_to new_reservation_path
   end
 
