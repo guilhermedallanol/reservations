@@ -50,8 +50,8 @@ class CatalogController < ApplicationController
       start_date = Date.strptime(params[:form][:start_date], '%m/%d/%Y')
       due_date = Date.strptime(params[:form][:due_date], '%m/%d/%Y')
       params[:cart] = params[:form]
-      params[:cart][:start_date_cart] = start_date.strftime("%Y-%m-%d")
-      params[:cart][:due_date_cart] = due_date.strftime("%Y-%m-%d")
+      params[:cart][:start_date_cart] = start_date.strftime('%Y-%m-%d')
+      params[:cart][:due_date_cart] = due_date.strftime('%Y-%m-%d')
       update_cart
     end
 

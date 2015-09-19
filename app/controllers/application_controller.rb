@@ -178,11 +178,8 @@ class ApplicationController < ActionController::Base
     # reload appropriate divs / exit
     prepare_catalog_index_vars if params[:controller] == 'catalog'
 
-    #if it is being called by submit_cart_updates_form, skip renders
-    if params[:form]
-      return
-    end
-
+    # skip renders when called by submit_cart_updates_form
+    return if params[:form]
     respond_to do |format|
       format.js { render template: 'cart_js/cart_dates_reload' }
       # guys i really don't like how this is rendering a template for js,

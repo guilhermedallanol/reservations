@@ -67,6 +67,7 @@ describe CatalogController, type: :controller do
       post :submit_cart_updates_form, @params
       expect(session[:cart].start_date).to eq(Date.tomorrow)
       expect(session[:cart].due_date).to eq(Date.tomorrow + 1)
+      is_expected.to redirect_to(new_reservation_path)
     end
     it 'should adjust item quantity' do
       # check if cart contains an item
@@ -78,17 +79,18 @@ describe CatalogController, type: :controller do
       post :submit_cart_updates_form, @params
       # should remove the item after setting quantity to 0
       expect(session[:cart].items).to be_empty
+      is_expected.to redirect_to(new_reservation_path)
     end
     it 'should set flash if invalid date' do
-      @params = { form: { start_date: Date.yesterday.strftime('%m/%d/%Y'),
-                          due_date: Date.today.strftime('%m/%d/%Y') },
-                  quantity: { @equipment_model.id => 0 },
+      @params = { form: { start_date: Date.today.strftime('%m/%d/%Y'),
+                          due_date: Date.yesterday.strftime('%m/%d/%Y') },
+                  quantity: { @equipment_model.id => 1 },
                   reserver_id: @user.id }
       post :submit_cart_updates_form, @params
-      expect(flash[:alert]).not_to be_nil
+      expect(flash[:error]).not_to be_nil
       expect(session[:cart].start_date).not_to eq(Date.yesterday)
+      is_expected.to redirect_to(new_reservation_path)
     end
-    it { is_expected.to redirect_to(new_reservation_path) }
   end
 
   describe 'PUT update_user_per_cat_page' do
