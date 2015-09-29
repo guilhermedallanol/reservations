@@ -36,7 +36,7 @@
     <hr>
     <input type="submit" value="Update Reservation" class= 'btn btn-success'>
     <%= link_to "Return to Catalog", catalog_path, class: 'btn btn-default' %>
-    <%= link_to 'Empty cart'.titleize, url_for(controller: 'catalog', action: 'empty_cart'), method: :delete, class: 'btn btn-default', id: 'empty_cart_btn'%>
+    <%= link_to 'Empty cart'.titleize, url_for(controller: 'catalog', action: 'empty_cart'), method: :delete, class: 'btn btn-danger'%>
   <% end %>
 </div>
 
