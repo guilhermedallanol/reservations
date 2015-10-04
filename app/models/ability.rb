@@ -39,6 +39,7 @@ class Ability
           can :renew, Reservation, reserver_id: user.id
         end
         can :update_cart, :all
+        can :reload_catalog_cart, :all
         can :update_index_dates, Reservation
         can :view_all_dates, Reservation
       when 'guest'
@@ -47,6 +48,7 @@ class Ability
           can :read, EquipmentModel
           can :empty_cart, :all
           can :update_cart, :all
+          can :reload_catalog_cart, :all
           can :create, User if AppConfig.check(:enable_new_users)
         end
         # rubocop:enable BlockNesting
