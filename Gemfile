@@ -75,6 +75,10 @@ group :development, :test do
   gem 'rubocop', '~> 0.29.1', require: false
 end
 
+group :heroku do
+  gem 'aws-sdk', '< 2.0'
+end
+
 group :development, :test, :heroku do
   # seed script gems
   gem 'ffaker', '~> 1.32.1', require: false
