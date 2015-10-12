@@ -44,17 +44,7 @@ class CatalogController < ApplicationController
 
   def submit_cart_updates_form # rubocop:disable MethodLength, AbcSize
     flash.clear
-    begin
-      # set the start and end date to updated values
-      # converts the dates into the expected format
-      start_date = Date.strptime(params[:form][:start_date], '%m/%d/%Y')
-      due_date = Date.strptime(params[:form][:due_date], '%m/%d/%Y')
-      params[:cart] = params[:form]
-      params[:cart][:start_date_cart] = start_date.strftime('%Y-%m-%d')
-      params[:cart][:due_date_cart] = due_date.strftime('%Y-%m-%d')
-      update_cart
-    end
-
+    update_cart
     # update all the items in the cart
     params[:quantity].each do |model_id, quantity|
       quantity = quantity.to_i
