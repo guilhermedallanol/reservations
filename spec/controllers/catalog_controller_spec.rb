@@ -61,7 +61,8 @@ describe CatalogController, type: :controller do
     end
     it 'should set new dates' do
       @params = { cart: { start_date_cart: Date.tomorrow.strftime('%Y-%m-%d'),
-                          due_date_cart: (Date.tomorrow + 1).strftime('%Y-%m-%d') },
+                          due_date_cart: (Date.tomorrow + 1)
+                                         .strftime('%Y-%m-%d') },
                   quantity: { @equipment_model.id => 1 },
                   reserver_id: @user.id }
       post :submit_cart_updates_form, @params
@@ -73,7 +74,8 @@ describe CatalogController, type: :controller do
       # check if cart contains an item
       expect session[:cart].items
       @params = { cart: { start_date_cart: Date.tomorrow.strftime('%Y-%m-%d'),
-                          due_date_cart: (Date.tomorrow + 1).strftime('%Y-%m-%d') },
+                          due_date_cart: (Date.tomorrow + 1)
+                                         .strftime('%Y-%m-%d') },
                   quantity: { @equipment_model.id => 0 },
                   reserver_id: @user.id }
       post :submit_cart_updates_form, @params
@@ -83,7 +85,8 @@ describe CatalogController, type: :controller do
     end
     it 'should set flash if invalid date' do
       @params = { cart: { start_date_cart: Date.tomorrow.strftime('%Y-%m-%d'),
-                          due_date_cart: (Date.tomorrow + 1).strftime('%Y-%m-%d') },
+                          due_date_cart: (Date.tomorrow + 1)
+                                         .strftime('%Y-%m-%d') },
                   quantity: { @equipment_model.id => 1 },
                   reserver_id: @user.id }
       post :submit_cart_updates_form, @params

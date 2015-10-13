@@ -42,6 +42,9 @@ class CatalogController < ApplicationController
     end
   end
 
+  # this method is called to update the cart using the edit_reservation_form
+  # it updates the cart using the method in the application controller and
+  # it also updates the item's quantity in the cart, using the given params
   def submit_cart_updates_form # rubocop:disable MethodLength, AbcSize
     flash.clear
     update_cart
