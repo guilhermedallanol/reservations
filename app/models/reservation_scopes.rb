@@ -4,41 +4,23 @@ module ReservationScopes
       default_scope { order('start_date, due_date, reserver_id') }
       scope :user_sort, ->() { order('reserver_id') }
 
-      scope :flagged, lambda { |flag|
-        where('flags & ? > 0', Reservation::FLAGS[flag])
-      }
+      scope :flagged, Reservations::FlaggedQuery
+      scope :not_flagged, Reservations::NotFlaggedQuery
 
-      scope :not_flagged, lambda { |flag|
-        where('flags & ? = 0', Reservation::FLAGS[flag])
-      }
+      scope :active, Reservations::ActiveQuery
+      scope :finalized, Reservations::FinalizedQuery
 
-      scope :active, ActiveReservationsQuery
-
-      scope :finalized, lambda {
-        where.not(status: Reservation.statuses.values_at(*%w(denied requested)))
-      }
-
-      scope :checked_out_today, lambda {
-        where(checked_out: Time.zone.today)
-      }
-      scope :checked_out_previous, lambda {
-        where('checked_out < ?', Time.zone.today)
-      }
-      scope :overdue, ->() { where(overdue: true).checked_out }
+      scope :checked_out_today, Reservations::CheckedOutTodayQuery
+      scope :checked_out_previous, Reservations::CheckedOutPreviousQuery
+      scope :overdue, Reservations::OverdueQuery
 
       scope :checked_in, ->() { returned }
 
-      scope :returned_on_time, ->() { where(overdue: false).returned }
-      scope :returned_overdue, ->() { where(overdue: true).returned }
-      scope :upcoming, lambda {
-        unscoped.where(start_date: Time.zone.today).reserved.user_sort
-      }
-      scope :due_soon, lambda {
-        where(due_date: Time.zone.today)
-      }
-      scope :checkoutable, lambda {
-        where('start_date <= ?', Time.zone.today).reserved
-      }
+      scope :returned_on_time, Reservations::ReturnedOnTimeQuery
+      scope :returned_overdue, Reservations::ReturnedOverdueQuery
+      scope :upcoming, Reservations::UpcomingQuery
+      scope :due_soon, Reservations::DueSoonQuery
+      scope :checkoutable, Reservations::CheckoutableQuery
       scope :future, lambda {
         where('start_date > ?', Time.zone.today.to_time).reserved
       }
