@@ -12,10 +12,7 @@ module ReservationScopes
         where('flags & ? = 0', Reservation::FLAGS[flag])
       }
 
-      scope :active, lambda {
-        where(status: Reservation.statuses.values_at(
-          *%w(reserved checked_out)))
-      }
+      scope :active, ActiveReservationsQuery
 
       scope :finalized, lambda {
         where.not(status: Reservation.statuses.values_at(*%w(denied requested)))
