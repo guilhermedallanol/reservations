@@ -78,6 +78,10 @@ module ReservationScopes
       scope :overlaps_with_date, lambda { |date|
         where('start_date <= ? and due_date >= ?', date, date)
       }
+      scope :consecutive_with, lambda { |res|
+        where('start_date = ? OR due_date = ?', res.due_date + 1.day,
+              res.start_date - 1.day)
+      }
       scope :has_notes, ->() { where.not(notes: nil) }
       scope :with_categories, lambda {
         joins(:equipment_model)

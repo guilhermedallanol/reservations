@@ -45,6 +45,23 @@ module ReservationValidations
       "full time period requested.\n")
   end
 
+  def check_consecutive
+    return unless reserved? || requested?
+    return unless equipment_model
+    return unless equipment_model.max_checkout_length
+
+    # get all reservations of same user with same equipment model
+    # that are consecutive to this reservation
+    res = Reservation.for_reserver(reserver).for_eq_model(equipment_model)
+          .consecutive_with(self)
+
+    res.each do |r|
+      next unless duration + r.duration > equipment_model.max_checkout_length
+      errors.add(:base, "Reserver (#{reserver.id}) has a consecutive "\
+                 "reservation (#{r.id}) that bypasses the length limit.\n")
+    end
+  end
+
   # Checks that reservation is not in the past
   # Does not run on checked out, checked in, overdue, or missed Reservations
   def not_in_past

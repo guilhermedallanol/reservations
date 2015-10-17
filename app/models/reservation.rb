@@ -18,7 +18,8 @@ class Reservation < ActiveRecord::Base
   validate :matched_item_and_model
   validate :check_status
   validate :status_final_state
-  validate :not_in_past, :available, :check_banned, on: :create
+  validate :not_in_past, :available, :check_banned,
+           :check_consecutive, on: :create
 
   nilify_blanks only: [:notes]
 

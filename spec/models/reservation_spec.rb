@@ -308,6 +308,7 @@ describe Reservation, type: :model do
       expect(reservation.available).to be_nil
       expect(reservation.not_in_past).to be_nil
       expect(reservation.check_banned).to be_nil
+      expect(reservation.check_consecutive).to be_nil
     end
   end
 
@@ -409,6 +410,47 @@ describe Reservation, type: :model do
     end
     it 'fails appropriate validations' do
       expect(reservation.validate).not_to eq([])
+    end
+    it 'passes other custom validations' do
+      expect(reservation.start_date_before_due_date).to be_nil
+      expect(reservation.not_empty).to be_nil
+      expect(reservation.matched_item_and_model).to be_nil
+      expect(reservation.available).to be_nil
+      expect(reservation.not_in_past).to be_nil
+      expect(reservation.check_banned).to be_nil
+    end
+  end
+
+  context 'with consecutive reservations that bypass length limit' do
+    subject(:reservation) do
+      r = FactoryGirl.build(:valid_reservation)
+      r.equipment_model.max_checkout_length = 3
+      r.equipment_model.save
+      r
+    end
+    let!(:consecutive) do
+      r = FactoryGirl.build(:reservation,
+                            reserver: reservation.reserver,
+                            equipment_model: reservation.equipment_model,
+                            start_date: reservation.due_date + 1.day,
+                            due_date: reservation.due_date +
+                                       reservation.equipment_model
+                                       .max_checkout_length.days - 1.day)
+      r.save(validate: false)
+      r
+    end
+
+    it 'should not save' do
+      expect(reservation.save).to be_falsey
+      expect(Reservation.all.size).to eq(1)
+    end
+    it 'can update' do
+      reservation.due_date -= 1.day
+      expect(reservation.save).to be_truthy
+    end
+    it 'fails appropriate validations' do
+      reservation.validate
+      expect(reservation.errors).not_to eq([])
     end
     it 'passes other custom validations' do
       expect(reservation.start_date_before_due_date).to be_nil
