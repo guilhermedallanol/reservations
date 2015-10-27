@@ -79,8 +79,9 @@ module ReservationScopes
         where('start_date <= ? and due_date >= ?', date, date)
       }
       scope :consecutive_with, lambda { |res|
-        where('start_date = ? OR due_date = ?', res.due_date + 1.day,
-              res.start_date - 1.day)
+        where('start_date = ? OR start_date = ? OR '\
+              'due_date = ? OR due_date = ?', res.due_date,
+              res.due_date + 1.day, res.start_date, res.start_date - 1.day)
       }
       scope :has_notes, ->() { where.not(notes: nil) }
       scope :with_categories, lambda {

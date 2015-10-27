@@ -421,7 +421,7 @@ describe Reservation, type: :model do
     end
   end
 
-  context 'with consecutive reservations that bypass length limit' do
+  context 'with a reservation starting the next day that passes length limit' do
     subject(:reservation) do
       r = FactoryGirl.build(:valid_reservation)
       r.equipment_model.max_checkout_length = 3
@@ -429,15 +429,13 @@ describe Reservation, type: :model do
       r
     end
     let!(:consecutive) do
-      r = FactoryGirl.build(:reservation,
-                            reserver: reservation.reserver,
-                            equipment_model: reservation.equipment_model,
-                            start_date: reservation.due_date + 1.day,
-                            due_date: reservation.due_date +
-                                       reservation.equipment_model
-                                       .max_checkout_length.days - 1.day)
-      r.save(validate: false)
-      r
+      FactoryGirl.create(:reservation,
+                         reserver: reservation.reserver,
+                         equipment_model: reservation.equipment_model,
+                         start_date: reservation.due_date + 1.day,
+                         due_date: reservation.due_date +
+                                   reservation.equipment_model
+                                   .max_checkout_length.days - 1.day)
     end
 
     it 'should not save' do
@@ -462,6 +460,46 @@ describe Reservation, type: :model do
     end
   end
 
+  context 'with a reservation starting the same day that passes length limit' do
+    subject(:reservation) do
+      r = FactoryGirl.build(:valid_reservation)
+      r.equipment_model.max_checkout_length = 3
+      FactoryGirl.create(:equipment_item,
+                         equipment_model: r.equipment_model)
+      r.equipment_model.save
+      r
+    end
+    let!(:consecutive) do
+      FactoryGirl.create(:reservation,
+                         reserver: reservation.reserver,
+                         equipment_model: reservation.equipment_model,
+                         start_date: reservation.due_date,
+                         due_date: reservation.due_date +
+                                   reservation.equipment_model
+                                   .max_checkout_length.days - 2.day)
+    end
+
+    it 'should not save' do
+      expect(reservation.save).to be_falsey
+      expect(Reservation.all.size).to eq(1)
+    end
+    it 'can update' do
+      reservation.due_date -= 1.day
+      expect(reservation.save).to be_truthy
+    end
+    it 'fails appropriate validations' do
+      reservation.validate
+      expect(reservation.errors).not_to eq([])
+    end
+    it 'passes other custom validations' do
+      expect(reservation.start_date_before_due_date).to be_nil
+      expect(reservation.not_empty).to be_nil
+      expect(reservation.matched_item_and_model).to be_nil
+      expect(reservation.available).to be_nil
+      expect(reservation.not_in_past).to be_nil
+      expect(reservation.check_banned).to be_nil
+    end
+  end
   context 'with category quantity problems' do
     subject(:reservation) do
       r = FactoryGirl.create(:valid_reservation)
