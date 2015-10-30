@@ -57,8 +57,8 @@ module ReservationValidations
 
     res.each do |r|
       next unless duration + r.duration > equipment_model.max_checkout_length
-      errors.add(:base, "Reserver (#{reserver.id}) has a consecutive "\
-                 "reservation (#{r.id}) that bypasses the length limit.\n")
+      errors.add(:base, "Reserver (#{reserver.md_link}) has a consecutive "\
+                 "reservation (##{r.id}) that bypasses the length limit.\n")
     end
   end
 
