@@ -2,6 +2,9 @@
 * This file will be updated whenever a new release is put into production.
 * Any problems should be reported via the "report an issue" link in the footer of the application.
 
+## v5.5.0 - 2015-11-23
+### Fixed
+
 ## v5.4.0 - 2015-10-26
 ### Fixed
 * Setup script for initial user now doesn't echo the typed password ([#1304](https://github.com/YaleSTC/reservations/pull/1304)).
