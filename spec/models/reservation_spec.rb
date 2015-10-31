@@ -462,10 +462,9 @@ describe Reservation, type: :model do
   context 'with a reservation starting the same day that passes length limit' do
     subject(:reservation) do
       r = FactoryGirl.build(:valid_reservation)
-      r.equipment_model.max_checkout_length = 3
+      r.equipment_model.update_attributes(max_checkout_length: 3)
       FactoryGirl.create(:equipment_item,
                          equipment_model: r.equipment_model)
-      r.equipment_model.save
       r
     end
     let!(:consecutive) do
