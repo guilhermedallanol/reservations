@@ -4,23 +4,23 @@ module ReservationScopes
       default_scope { order('start_date, due_date, reserver_id') }
       scope :user_sort, ->() { order('reserver_id') }
 
-      scope :flagged, Reservations::FlaggedQuery
-      scope :not_flagged, Reservations::NotFlaggedQuery
+      scope :flagged, Reservations::FlaggedQuery.new
+      scope :not_flagged, Reservations::NotFlaggedQuery.new
 
-      scope :active, Reservations::ActiveQuery
-      scope :finalized, Reservations::FinalizedQuery
+      scope :active, Reservations::ActiveQuery.new
+      scope :finalized, Reservations::FinalizedQuery.new
 
-      scope :checked_out_today, Reservations::CheckedOutTodayQuery
-      scope :checked_out_previous, Reservations::CheckedOutPreviousQuery
-      scope :overdue, Reservations::OverdueQuery
+      scope :checked_out_today, Reservations::CheckedOutTodayQuery.new
+      scope :checked_out_previous, Reservations::CheckedOutPreviousQuery.new
+      scope :overdue, Reservations::OverdueQuery.new
 
       scope :checked_in, ->() { returned }
 
-      scope :returned_on_time, Reservations::ReturnedOnTimeQuery
-      scope :returned_overdue, Reservations::ReturnedOverdueQuery
-      scope :upcoming, Reservations::UpcomingQuery
-      scope :due_soon, Reservations::DueSoonQuery
-      scope :checkoutable, Reservations::CheckoutableQuery
+      scope :returned_on_time, Reservations::ReturnedOnTimeQuery.new
+      scope :returned_overdue, Reservations::ReturnedOverdueQuery.new
+      scope :upcoming, Reservations::UpcomingQuery.new
+      scope :due_soon, Reservations::DueSoonQuery.new
+      scope :checkoutable, Reservations::CheckoutableQuery.new
       scope :future, lambda {
         where('start_date > ?', Time.zone.today.to_time).reserved
       }
