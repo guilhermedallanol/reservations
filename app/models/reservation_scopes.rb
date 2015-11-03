@@ -2,10 +2,13 @@ module ReservationScopes
   def self.included(base) # rubocop:disable MethodLength, AbcSize
     base.class_eval do
       default_scope { order('start_date, due_date, reserver_id') }
-      scope :user_sort, ->() { order('reserver_id') }
 
-      scope :flagged, Reservations::FlaggedQuery.new
-      scope :not_flagged, Reservations::NotFlaggedQuery.new
+      scope :flagged, lambda { |flag|
+        where('flags & ? > 0', Reservation::FLAGS[flag])
+      }
+      scope :not_flagged, lambda {|flag|
+        where('flags & ? = 0', Reservation::FLAGS[flag])
+      }
 
       scope :active, Reservations::ActiveQuery.new
       scope :finalized, Reservations::FinalizedQuery.new
