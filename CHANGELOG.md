@@ -5,6 +5,9 @@
 ## v5.5.0 - 2015-11-23
 ### Fixed
 
+### Changed
+* Made equipent table more informative for patrons ([#1199](https://github.com/YaleSTC/reservations/issues/1199)).
+
 ## v5.4.0 - 2015-10-26
 ### Fixed
 * Setup script for initial user now doesn't echo the typed password ([#1304](https://github.com/YaleSTC/reservations/pull/1304)).
